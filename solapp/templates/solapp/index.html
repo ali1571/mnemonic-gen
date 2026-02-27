@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Solana Mnemonic Generator{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-white">
+
+    <!-- Top Navigation -->
+    <nav class="border-b-2 border-black">
+        <div class="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center">
+            <div class="text-xs font-bold tracking-widest">
+                SOL//MNEMONIC
+            </div>
+            <div class="flex gap-6 text-xs font-bold tracking-wider">
+                <a href="#" class="hover:underline">INFO</a>
+                <a href="#" class="hover:underline">GITHUB</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-8 py-16">
+
+        <!-- Header/Title Section -->
+        <div class="mb-16 flex justify-between items-start">
+
+            <!-- Left: Title -->
+            <div>
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-black leading-none mb-4">
+                    MNEMONIC<br>GEN<sup class="text-lg md:text-xl lg:text-2xl">™</sup>
+                </h1>
+                <div class="w-64 h-1 bg-black mb-8"></div>
+                <p class="text-sm md:text-base max-w-md leading-relaxed font-medium">
+                    Generate cryptographically secure <span class="font-black">BIP39</span> mnemonic phrases<br>
+                    for <span class="font-black">All Blockchains</span> development & testing.
+                </p>
+            </div>
+
+            <!-- Right: Impossible Odds Counter -->
+            <div class="bg-black text-white p-6 min-w-96 max-w-lg">
+                <h2 class="text-xs font-black tracking-widest text-gray-400 mb-6">// THE IMPOSSIBLE ODDS</h2>
+                <div id="odds-counter">
+                    <p class="text-xs text-gray-600 tracking-widest font-mono">
+                        GENERATE YOUR FIRST MNEMONIC TO SEE HOW SMALL YOU ARE.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Grid Container: Left (Form) | Right (Output) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12">
+
+            <!-- LEFT: Input Section -->
+            <div class="border-4 border-black p-8">
+                <h2 class="text-xs font-black tracking-widest mb-6">
+                    CONFIGURATION
+                </h2>
+
+                <form hx-post="/generate/" hx-target="#output-area" hx-swap="innerHTML">
+                    {% csrf_token %}
+
+                <!-- Quantity Input -->
+                <div class="mb-6">
+                    <label class="block text-xs font-black tracking-widest mb-2">
+                        QUANTITY
+                        <span class="ml-2 text-[10px] text-gray-400 font-medium normal-case tracking-tight">type in the number of mnemonics you want to generate
+                        </span>
+                    </label>
+                    <input
+                        type="number"
+                        name="quantity"
+                        value="1"
+                        min="1"
+                        max="100"
+                        class="w-full border-2 border-black px-4 py-3 text-lg font-bold focus:outline-none focus:ring-0"
+                        required>
+                    <p class="text-xs mt-1 text-gray-600">Enter 1-100 mnemonics</p>
+                </div>
+
+                <!-- Generate Button -->
+                <button
+                    type="submit"
+                    class="w-full bg-black text-white py-4 text-sm font-black tracking-widest hover:bg-gray-800 transition-colors">
+                    GENERATE →
+                </button>
+
+            </form>
+
+            </div>
+
+            <!-- RIGHT: Output Section -->
+            <div class="border-4 border-black p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xs font-black tracking-widest">
+                        GENERATED MNEMONICS
+                    </h2>
+                    <button
+                        id="download-btn"
+                        onclick="downloadMnemonics()"
+                        class="text-xs font-black tracking-widest hover:underline cursor-pointer hidden">
+                        DOWNLOAD .TXT
+                    </button>
+                </div>
+                <div id="output-area" class="text-sm text-gray-400">
+                    Results will appear here...
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock %}

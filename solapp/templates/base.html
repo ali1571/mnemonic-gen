@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sol Site{% endblock %}</title>
+
+    <!-- Tailwind CSS CDN (for learning - later you'll use a better method) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body class="bg-gray-100">
+    {% block content %}
+    <!-- Child templates put content here -->
+    {% endblock %}
+
+        <script>
+        function copyToClipboard(text, button) {
+            // Copy text to clipboard
+            navigator.clipboard.writeText(text).then(function() {
+                // Success - change button text temporarily
+                const originalText = button.textContent;
+                button.textContent = 'COPIED!';
+
+                // Reset after 2 seconds
+                setTimeout(function() {
+                    button.textContent = originalText;
+                }, 2000);
+            }).catch(function(err) {
+                // Error handling
+                console.error('Copy failed:', err);
+                button.textContent = 'FAILED';
+            });
+        }
+
+
+
+        function downloadMnemonics() {
+            // Get all mnemonic text from the page
+            const outputArea = document.getElementById('output-area');
+            const mnemonicElements = outputArea.querySelectorAll('.font-mono');
+
+            // Extract text from each mnemonic
+            let mnemonicsText = '';
+            mnemonicElements.forEach((element, index) => {
+                mnemonicsText += `MNEMONIC #${index + 1}\n`;
+                mnemonicsText += element.textContent + '\n\n';
+            });
+
+            // Create a blob (file in memory)
+            const blob = new Blob([mnemonicsText], { type: 'text/plain' });
+
+            // Create download link
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mnemonics_${Date.now()}.txt`;
+
+            // Trigger download
+            document.body.appendChild(a);
+            a.click();
+
+            // Cleanup
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+        <!-- Footer with Disclaimer -->
+    <!-- Footer with Disclaimer -->
+    <footer class="border-t-4 border-black mt-16">
+        <div class="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-8">
+            <!-- Disclaimer -->
+            <div class="flex items-start gap-3 md:gap-4 mb-4">
+                <div class="text-2xl md:text-4xl">⚠️</div>
+                <div>
+                    <h3 class="text-xs font-black tracking-widest mb-2">DISCLAIMER</h3>
+                    <p class="text-xs md:text-sm leading-relaxed">
+                        For <span class="font-bold">testing only</span>. Don't be dumb—never use these for real funds.
+                        Use a hardware wallet like a normal person.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="border-t-2 border-black pt-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                <p class="text-xs font-bold tracking-widest">SOL//MNEMONIC™</p>
+                <p class="text-xs">
+                    Made with 🖤 by
+                    <a href="https://twitter.com/QWERTS1571" target="_blank" class="font-bold hover:underline">
+                        @QWERTS1571
+                    </a>
+                </p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
