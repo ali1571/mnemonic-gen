@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Info — SOL//MNEMONIC{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-white">
+
+    <!-- Top Navigation -->
+    <nav class="border-b-2 border-black">
+        <div class="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center">
+            <a href="/" class="text-xs font-bold tracking-widest hover:underline">
+                SOL//MNEMONIC
+            </a>
+            <div class="flex gap-6 text-xs font-bold tracking-wider">
+                <a href="/info/" class="hover:underline">INFO</a>
+                <a href="https://github.com/ali1571/mnemonic-gen" target="_blank" class="hover:underline">GITHUB</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="max-w-3xl mx-auto px-8 py-16">
+
+        <!-- Who I Am -->
+        <div class="mb-16">
+            <h1 class="text-xs font-black tracking-widest text-gray-400 mb-6">// What my AI thinks about me: </h1>
+            <p class="text-base font-medium leading-relaxed">
+                21. Self-taught codewriter. Python and JavaScript, blockchain-native, Solana-focused. I explore on-chain identity, security tooling, and content automation. Projects are works in progress — built to learn and push ideas. Solo everything: backend, frontend, design, deployment decisions. Moves fast, thinks in products, cares about how things look.
+            </p>
+        </div>
+
+        <div class="w-full h-px bg-black mb-16"></div>
+
+        <!-- The Math -->
+        <div>
+            <h2 class="text-xs font-black tracking-widest text-gray-400 mb-8">// THE MATH BEHIND THE COUNTER</h2>
+
+            <div class="space-y-12 text-sm leading-loose font-medium">
+
+                <!-- Step 1 -->
+                <div>
+                    <p class="text-xs font-black tracking-widest mb-4">STEP 1 — WHERE DOES THE BIG NUMBER COME FROM?</p>
+                    <p class="mb-4">Your app generates 12-word BIP39 mnemonics. Each word is chosen from a list of 2048 words.</p>
+                    <div class="border-l-4 border-black pl-6 font-mono text-xs space-y-2 my-6">
+                        <p>2048 = 2<sup>11</sup></p>
+                        <p>Each word = 11 bits of information</p>
+                        <p>12 words = 12 × 11 = 132 bits total</p>
+                    </div>
+                    <p class="mb-4">But 4 of those bits are checksum (validation, not randomness). So the actual unique entropy is:</p>
+                    <div class="border-l-4 border-black pl-6 font-mono text-xs space-y-2 my-6">
+                        <p>132 - 4 = 128 bits of real randomness</p>
+                    </div>
+                    <p class="mb-4">That means total possible unique wallets =</p>
+                    <div class="bg-black text-white p-6 font-mono text-xs my-6">
+                        <p class="text-gray-400 mb-2">2<sup>128</sup> =</p>
+                        <p class="break-all font-black text-white">340,282,366,920,938,463,463,374,607,431,768,211,456</p>
+                    </div>
+                    <p>That's your number. 39 digits. That's how many distinct 12-word seed phrases can ever exist.</p>
+                </div>
+
+                <div class="w-full h-px bg-black"></div>
+
+                <!-- Step 2 -->
+                <div>
+                    <p class="text-xs font-black tracking-widest mb-4">STEP 2 — WHAT IS "COLLISION"?</p>
+                    <p class="mb-4">A collision = two different generation attempts produce the exact same wallet. If that happened, whoever generated it second could drain the first person's funds.</p>
+                    <p class="mb-4">The question is: how likely is that? This uses the Birthday Problem from probability:</p>
+                    <div class="border-l-4 border-black pl-6 font-mono text-xs space-y-2 my-6">
+                        <p>After generating N wallets,</p>
+                        <p>probability of collision ≈ N² / 2<sup>129</sup></p>
+                    </div>
+                    <p class="mb-4">So if you generated 1 billion wallets per second for the entire age of the universe (~14 billion years):</p>
+                    <div class="border-l-4 border-black pl-6 font-mono text-xs space-y-2 my-6">
+                        <p>N = 1,000,000,000 × 60 × 60 × 24 × 365 × 14,000,000,000</p>
+                        <p>N ≈ 4.4 × 10<sup>26</sup> wallets</p>
+                        <p class="mt-4">Collision probability ≈ (4.4×10<sup>26</sup>)² / 2<sup>129</sup></p>
+                        <p>≈ 10<sup>53</sup> / 10<sup>39</sup></p>
+                        <p>≈ 0.000000000000 (still basically zero)</p>
+                    </div>
+                    <p>You would need to generate 2<sup>64</sup> wallets (~18 quintillion) before the collision probability even reaches 50%. That's thermodynamically impossible at current compute.</p>
+                </div>
+
+                <div class="w-full h-px bg-black"></div>
+
+                <!-- Step 3 -->
+                <div>
+                    <p class="text-xs font-black tracking-widest mb-4">STEP 3 — WHAT DOES THE COUNTER ACTUALLY SHOW?</p>
+                    <p class="mb-6">Three things:</p>
+
+                    <div class="space-y-8">
+                        <div>
+                            <p class="font-black mb-2">A) The total possible space — static, huge, intimidating</p>
+                            <div class="border-l-4 border-black pl-6 font-mono text-xs my-4">
+                                <p class="text-gray-400 mb-1">Total possible wallets:</p>
+                                <p class="break-all">340,282,366,920,938,463,463,374,607,431,768,211,456</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="font-black mb-2">B) Wallets generated this session — live counter, ticks up every time you generate</p>
+                            <div class="border-l-4 border-black pl-6 font-mono text-xs my-4">
+                                <p class="text-gray-400 mb-1">Generated this session:</p>
+                                <p>47</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="font-black mb-2">C) Your fraction of the address space — a progress bar that NEVER MOVES</p>
+                            <div class="border-l-4 border-black pl-6 font-mono text-xs my-4">
+                                <p class="text-gray-400 mb-1">You've covered:</p>
+                                <p>0.000000000000000000000000000000000000014%</p>
+                            </div>
+                            <div class="bg-black text-white p-6 mt-4">
+                                <p class="font-mono text-xs text-gray-400">That last one is the gut-punch. The bar is visually empty no matter what.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

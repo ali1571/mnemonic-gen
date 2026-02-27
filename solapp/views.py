@@ -14,6 +14,10 @@ def index(request):
     return render(request, 'solapp/index.html')
 
 
+def info(request):
+    return render(request, 'solapp/info.html')
+
+
 def test_htmx(request):
     return HttpResponse("<p class='text-green-600 font-bold'>HTMX is working!</p>")
 
