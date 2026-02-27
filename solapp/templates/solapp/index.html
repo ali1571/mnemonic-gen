@@ -22,22 +22,22 @@
     <div class="max-w-7xl mx-auto px-8 py-16">
 
         <!-- Header/Title Section -->
-        <div class="mb-16 flex justify-between items-start">
+        <div class="mb-16 flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
 
-            <!-- Left: Title -->
+            <!-- Title -->
             <div>
-                <h1 class="text-5xl md:text-6xl lg:text-7xl font-black leading-none mb-4">
-                    MNEMONIC<br>GEN<sup class="text-lg md:text-xl lg:text-2xl">™</sup>
+                <h1 class="text-2xl font-black leading-none mb-4 lg:text-5xl xl:text-7xl">
+                    MNEMONIC<br>GEN<sup class="text-xs lg:text-lg xl:text-2xl">™</sup>
                 </h1>
-                <div class="w-64 h-1 bg-black mb-8"></div>
-                <p class="text-sm md:text-base max-w-md leading-relaxed font-medium">
+                <div class="w-64 h-1 bg-black mb-8 hidden lg:block"></div>
+                <p class="text-sm md:text-base max-w-md leading-relaxed font-medium hidden lg:block">
                     Generate cryptographically secure <span class="font-black">BIP39</span> mnemonic phrases<br>
                     for <span class="font-black">All Blockchains</span> development & testing.
                 </p>
             </div>
 
-            <!-- Right: Impossible Odds Counter -->
-            <div class="bg-black text-white p-6 min-w-96 max-w-lg">
+            <!-- Impossible Odds Counter -->
+            <div class="bg-black text-white p-6 hidden lg:block lg:min-w-96 lg:max-w-lg">
                 <h2 class="text-xs font-black tracking-widest text-gray-400 mb-6">// THE IMPOSSIBLE ODDS</h2>
                 <div id="odds-counter">
                     <p class="text-xs text-gray-600 tracking-widest font-mono">
