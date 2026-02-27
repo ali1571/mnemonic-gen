@@ -73,6 +73,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'solsite.wsgi.application'
 
+# Use signed cookies for sessions — no database required (works on Vercel serverless)
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
