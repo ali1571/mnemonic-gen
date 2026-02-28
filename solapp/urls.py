@@ -8,4 +8,5 @@ urlpatterns = [
     path('test/', views.test_htmx, name='test_htmx'),  # For your button
     path('generate/', views.generate_mnemonics_view, name='generate'),
     path('info/', views.info, name='info'),
+    path('derive/', views.derive_view, name='derive'),
 ]

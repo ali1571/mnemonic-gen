@@ -8,8 +8,9 @@
     <!-- Top Navigation -->
     <nav class="border-b-2 border-black">
         <div class="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center">
-            <div class="text-xs font-bold tracking-widest">
-                SOL//MNEMONIC
+            <div class="flex gap-6 text-xs font-bold tracking-widest">
+                <span>SOL//MNEMONIC</span>
+                <a href="{% url 'solapp:derive' %}" class="hover:underline">SOL//ADDR</a>
             </div>
             <div class="flex gap-6 text-xs font-bold tracking-wider">
                 <a href="/info/" class="hover:underline">INFO</a>
@@ -95,12 +96,20 @@
                     <h2 class="text-xs font-black tracking-widest">
                         GENERATED MNEMONICS
                     </h2>
-                    <button
-                        id="download-btn"
-                        onclick="downloadMnemonics()"
-                        class="text-xs font-black tracking-widest hover:underline cursor-pointer hidden">
-                        DOWNLOAD .TXT
-                    </button>
+                    <div class="flex gap-4 items-center">
+                        <button
+                            id="download-btn"
+                            onclick="downloadMnemonics()"
+                            class="text-xs font-black tracking-widest hover:underline cursor-pointer hidden">
+                            DOWNLOAD .TXT
+                        </button>
+                        <a
+                            id="derive-btn"
+                            href="{% url 'solapp:derive' %}"
+                            class="text-xs font-black tracking-widest hover:underline cursor-pointer hidden">
+                            → DERIVE ADDRESSES
+                        </a>
+                    </div>
                 </div>
                 <div id="output-area" class="text-sm text-gray-400">
                     Results will appear here...

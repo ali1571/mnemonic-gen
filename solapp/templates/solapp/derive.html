@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+
+{% block title %}Solana Address Generator — SOL//ADDR{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-white">
+
+    <!-- Top Navigation -->
+    <nav class="border-b-2 border-black">
+        <div class="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center">
+            <div class="flex gap-6 text-xs font-bold tracking-widest">
+                <a href="{% url 'solapp:index' %}" class="hover:underline">SOL//MNEMONIC</a>
+                <span>SOL//ADDR</span>
+            </div>
+            <div class="flex gap-6 text-xs font-bold tracking-wider">
+                <a href="{% url 'solapp:info' %}" class="hover:underline">INFO</a>
+                <a href="https://github.com/ali1571/mnemonic-gen" target="_blank" class="hover:underline">GITHUB</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-8 py-16">
+
+        <!-- Header/Title Section -->
+        <div class="mb-16 flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+
+            <!-- Title -->
+            <div>
+                <h1 class="text-2xl font-black leading-none mb-4 lg:text-5xl xl:text-7xl">
+                    ADDR<br>GEN<sup class="text-xs lg:text-lg xl:text-2xl">™</sup>
+                </h1>
+                <div class="w-64 h-1 bg-black mb-8 hidden lg:block"></div>
+                <p class="text-sm md:text-base max-w-md leading-relaxed font-medium hidden lg:block">
+                    Derive cryptographically valid <span class="font-black">Solana</span> addresses<br>
+                    from <span class="font-black">BIP39</span> mnemonics using Ed25519.
+                </p>
+            </div>
+
+            <!-- Stats Panel — updated via HTMX OOB after derivation -->
+            <div class="bg-black text-white p-6 hidden lg:block lg:min-w-96 lg:max-w-lg">
+                <h2 class="text-xs font-black tracking-widest text-gray-400 mb-6">// THE DERIVATION</h2>
+                <div id="derive-stats">
+                    <p class="text-xs text-gray-600 tracking-widest font-mono">
+                        CONFIGURE YOUR PARAMETERS TO BEGIN DERIVATION.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Grid Container: Left (Form) | Right (Output) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12">
+
+            <!-- LEFT: Configuration -->
+            <div class="border-4 border-black p-8">
+                <h2 class="text-xs font-black tracking-widest mb-6">CONFIGURATION</h2>
+
+                <form hx-post="{% url 'solapp:derive' %}"
+                      hx-target="#derive-output"
+                      hx-swap="innerHTML">
+                    {% csrf_token %}
+
+                    <!-- Hidden control fields -->
+                    <input type="hidden" name="source" id="source-input" value="manual">
+                    <input type="hidden" name="num_accounts" id="num-accounts-input" value="1">
+                    <input type="hidden" name="mnemonics_data" id="mnemonics-data" value="">
+
+                    <!-- Session banner: hidden by default, JS reveals if sessionStorage has data -->
+                    <div id="session-mode" class="mb-6 hidden">
+                        <label class="block text-xs font-black tracking-widest mb-2">SOURCE</label>
+                        <div class="border-2 border-black bg-black text-white p-4 mb-3">
+                            <p class="text-xs font-black tracking-widest">
+                                <span id="session-count">0</span> MNEMONIC<span id="session-plural"></span> LOADED
+                            </p>
+                            <p class="text-[10px] text-gray-400 font-mono mt-1 tracking-widest">
+                                FROM SOL//MNEMONIC ↗
+                            </p>
+                        </div>
+                        <button type="button"
+                                onclick="switchToManual()"
+                                class="text-xs font-bold tracking-wider text-gray-500 hover:underline">
+                            OR USE MANUAL INPUT →
+                        </button>
+                    </div>
+
+                    <!-- Manual textarea: shown by default -->
+                    <div id="manual-mode" class="mb-6">
+                        <label class="block text-xs font-black tracking-widest mb-2">
+                            MNEMONICS
+                            <span class="ml-2 text-[10px] text-gray-400 font-medium normal-case tracking-tight">
+                                one phrase per line
+                            </span>
+                        </label>
+                        <textarea
+                            name="mnemonics_text"
+                            id="mnemonics-textarea"
+                            rows="6"
+                            placeholder="word1 word2 word3 ... word12&#10;word1 word2 word3 ... word12"
+                            oninput="updateManualCount()"
+                            class="w-full border-2 border-black px-4 py-3 text-xs font-mono focus:outline-none resize-none"></textarea>
+                        <p class="text-xs mt-1 text-gray-600">
+                            <span id="manual-count">0</span> MNEMONICS DETECTED
+                        </p>
+                    </div>
+
+                    <!-- Accounts per mnemonic selector -->
+                    <div class="mb-8">
+                        <label class="block text-xs font-black tracking-widest mb-1">
+                            ACCOUNTS PER MNEMONIC
+                        </label>
+                        <p class="text-[10px] text-gray-400 font-medium tracking-tight mb-4">
+                            each account = a different derivation path = a different address
+                        </p>
+                        <div class="flex gap-2 mb-4">
+                            <button type="button" onclick="setAccounts(1, this)"
+                                    class="accounts-btn bg-black text-white px-5 py-3 text-sm font-black tracking-wider">
+                                1
+                            </button>
+                            <button type="button" onclick="setAccounts(3, this)"
+                                    class="accounts-btn border-2 border-black px-5 py-3 text-sm font-black tracking-wider hover:bg-gray-100">
+                                3
+                            </button>
+                            <button type="button" onclick="setAccounts(5, this)"
+                                    class="accounts-btn border-2 border-black px-5 py-3 text-sm font-black tracking-wider hover:bg-gray-100">
+                                5
+                            </button>
+                            <button type="button" onclick="setAccounts(10, this)"
+                                    class="accounts-btn border-2 border-black px-5 py-3 text-sm font-black tracking-wider hover:bg-gray-100">
+                                10
+                            </button>
+                        </div>
+                        <p class="text-xs font-mono text-gray-500">
+                            =&nbsp;<span id="total-addr-count" class="font-black text-black text-base">0</span>&nbsp;TOTAL ADDRESSES
+                        </p>
+                    </div>
+
+                    <!-- Submit -->
+                    <button
+                        type="submit"
+                        class="w-full bg-black text-white py-4 text-sm font-black tracking-widest hover:bg-gray-800 transition-colors">
+                        DERIVE ADDRESSES →
+                    </button>
+
+                </form>
+            </div>
+
+            <!-- RIGHT: Output -->
+            <div class="border-4 border-black p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xs font-black tracking-widest">DERIVED ADDRESSES</h2>
+                    <button
+                        id="download-all-btn"
+                        onclick="downloadAddresses()"
+                        class="text-xs font-black tracking-widest hover:underline cursor-pointer hidden">
+                        DOWNLOAD .TXT
+                    </button>
+                </div>
+                <div id="derive-output" class="text-sm text-gray-400">
+                    Results will appear here...
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    let sessionMnemonics = [];
+
+    // On page load: check sessionStorage for mnemonics from SOL//MNEMONIC
+    document.addEventListener('DOMContentLoaded', () => {
+        const raw = sessionStorage.getItem('pendingMnemonics');
+        if (!raw) return;
+        try {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                sessionMnemonics = parsed;
+                document.getElementById('session-count').textContent = parsed.length;
+                document.getElementById('session-plural').textContent = parsed.length !== 1 ? 'S' : '';
+                document.getElementById('session-mode').classList.remove('hidden');
+                document.getElementById('manual-mode').classList.add('hidden');
+                document.getElementById('source-input').value = 'session';
+                document.getElementById('mnemonics-data').value = raw;
+                updateTotal();
+            }
+        } catch (e) {}
+    });
+
+    function setAccounts(n, btn) {
+        document.getElementById('num-accounts-input').value = n;
+        document.querySelectorAll('.accounts-btn').forEach(b => {
+            b.classList.remove('bg-black', 'text-white');
+            b.classList.add('border-2', 'border-black');
+        });
+        btn.classList.add('bg-black', 'text-white');
+        btn.classList.remove('border-2', 'border-black');
+        updateTotal();
+    }
+
+    function getMnemonicCount() {
+        if (document.getElementById('source-input').value === 'session') {
+            return sessionMnemonics.length;
+        }
+        const textarea = document.getElementById('mnemonics-textarea');
+        return textarea ? textarea.value.split('\n').filter(l => l.trim()).length : 0;
+    }
+
+    function updateTotal() {
+        const n = parseInt(document.getElementById('num-accounts-input').value) || 1;
+        document.getElementById('total-addr-count').textContent = (n * getMnemonicCount()).toLocaleString();
+    }
+
+    function updateManualCount() {
+        const textarea = document.getElementById('mnemonics-textarea');
+        const count = textarea.value.split('\n').filter(l => l.trim()).length;
+        document.getElementById('manual-count').textContent = count;
+        updateTotal();
+    }
+
+    function switchToManual() {
+        sessionMnemonics = [];
+        document.getElementById('session-mode').classList.add('hidden');
+        document.getElementById('manual-mode').classList.remove('hidden');
+        document.getElementById('source-input').value = 'manual';
+        document.getElementById('mnemonics-data').value = '';
+        updateTotal();
+    }
+
+    function downloadAddresses() {
+        const groups = document.querySelectorAll('.mnemonic-group');
+        let text = '';
+        groups.forEach((group, i) => {
+            const mnemonic = group.getAttribute('data-mnemonic');
+            text += `MNEMONIC #${i + 1}\n${mnemonic}\n`;
+            group.querySelectorAll('[data-address]').forEach(el => {
+                text += `  ${el.getAttribute('data-path')}: ${el.getAttribute('data-address')}\n`;
+            });
+            text += '\n';
+        });
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `solana_addresses_${Date.now()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+</script>
+{% endblock %}
